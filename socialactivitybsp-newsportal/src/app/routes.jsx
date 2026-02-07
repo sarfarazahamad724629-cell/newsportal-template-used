@@ -6,6 +6,9 @@ import About from "../pages/About";
 import Contact from "../pages/Contact";
 import PrivacyPolicy from "../pages/PrivacyPolicy";
 import NotFound from "../pages/NotFound";
+import UserSignInPage from "../user/UserSignInPage";
+import UserSignUpPage from "../user/UserSignUpPage";
+import UserProfilePage from "../user/UserProfilePage";
 
 
 // admin
@@ -26,6 +29,9 @@ function RoutesConfig() {
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/news/:identifier" element={<NewsDetails />} />
       <Route path="/category/:name" element={<Category />} />
+      <Route path="/user/signin" element={<UserSignInPage />} />
+      <Route path="/user/signup" element={<UserSignUpPage />} />
+      <Route path="/user/profile" element={<UserProfilePage />} />
       {/* Auth */}
       <Route path="/auth" element={<AuthLayout />} />
       {/* Admin */}
