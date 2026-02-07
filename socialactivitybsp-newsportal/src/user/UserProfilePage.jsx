@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ImageUploader from "../admin/components/ImageUploader";
 import {
   account,
@@ -13,6 +13,7 @@ import "./UserAuth.css";
 const USERS_COLLECTION_ID = import.meta.env.VITE_APPWRITE_USERS_COLLECTION_ID;
 
 export default function UserProfilePage() {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [avatar, setAvatar] = useState("");
@@ -78,6 +79,7 @@ export default function UserProfilePage() {
     setName("");
     setUsername("");
     setAvatar("");
+    navigate("/user/auth");
   };
 
   if (loading) {
