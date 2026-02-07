@@ -1,0 +1,169 @@
+
+{
+  id: "news_1705412459123",
+  slug: "up-election-2026-live-updates",
+  status: "published",          // draft | published | scheduled
+  language: "hi",
+  theme: "dark",
+
+  title: "UP Election 2026: Live Updates",
+
+  category: {
+    id: "politics",
+    name: "Politics"
+  },
+
+  tags: ["UP Election", "BJP", "Congress"],
+
+  seo: {
+    metaTitle: "UP Election 2026 Live News",
+    metaDescription: "UP Election 2026 से जुड़ी ताज़ा खबरें"
+  },
+
+  stats: {
+    views: 0,
+    likes: 0,
+    shares: 0,
+    comments: 0
+  },
+
+  createdAt: "2026-01-16T10:30:00.000Z",
+  updatedAt: "2026-01-16T11:15:00.000Z",
+  publishedAt: "2026-01-16T11:20:00.000Z",
+
+  // ─────────────────────────────
+  // AUTHOR (GLOBAL – SEO + BYLINE)
+  // ─────────────────────────────
+  author: {
+    id: "user_12",
+    name: "शेख सरफराज अहमद",
+    role: "Media Chief",
+    image: "/users/admin.jpg",
+    social: {
+      whatsapp: "",
+      instagram: "",
+      facebook: "",
+      twitter: ""
+    }
+  },
+
+  // ─────────────────────────────
+  // 🔥 MAIN CONTENT (BLOCK ENGINE)
+  // ─────────────────────────────
+  blocks: [
+
+    // ───── LEAD PARAGRAPH (EXCERPT SOURCE) ─────
+    {
+      id: "b1",
+      type: "paragraph",
+      variant: "lead",
+      richText: [
+        { text: "Lucknow: ", marks: ["bold"] },
+        { text: "उत्तर प्रदेश विधानसभा चुनाव 2026 में..." }
+      ],
+      styles: {
+        fontSize: "18px",
+        lineHeight: "1.9",
+        fontWeight: "500",
+        textAlign: "left",
+        color: "#e5e7eb"
+      }
+    },
+
+    // ───── 🔥 HERO IMAGE (FIRST IMAGE BLOCK) ─────
+    {
+      id: "b2",
+      type: "image",
+      isHero: true,              // optional (auto-detect bhi ho sakta)
+      fileId: "img_2398",
+      src: "/uploads/voting.jpg",
+      alt: "UP election voting",
+      caption: "मतदान केंद्र पर वोटर्स",
+      credit: "ANI",
+      align: "center",
+      size: "full",
+      aspectRatio: "16/9",
+      radius: "14px",
+      priority: "high"           // LCP / SEO
+    },
+
+    // ───── SUBHEADING ─────
+    {
+      id: "b3",
+      type: "subheading",
+      text: "अब तक के प्रमुख आंकड़े",
+      styles: {
+        fontSize: "22px",
+        fontWeight: "700",
+        color: "#ffffff",
+        divider: true
+      }
+    },
+
+    // ───── LIST BLOCK ─────
+    {
+      id: "b4",
+      type: "list",
+      listType: "bullet",
+      items: [
+        "BJP – 120 सीटों पर आगे",
+        "SP – 65 सीटें",
+        "कांग्रेस – 18 सीटें"
+      ]
+    },
+
+    // ───── QUOTE BLOCK ─────
+    {
+      id: "b5",
+      type: "quote",
+      text: "यह चुनाव लोकतंत्र की दिशा तय करेगा",
+      by: "मुख्य निर्वाचन आयुक्त",
+      styles: {
+        color: "#38bdf8",
+        borderColor: "#0ea5e9"
+      }
+    },
+
+    // ───── GALLERY BLOCK ─────
+    {
+      id: "b6",
+      type: "gallery",
+      columns: 3,
+      images: [
+        {
+          id: "g1",
+          src: "/uploads/gal1.jpg",
+          caption: "मतगणना केंद्र",
+          credit: "PTI"
+        },
+        {
+          id: "g2",
+          src: "/uploads/gal2.jpg",
+          caption: "चुनावी कर्मचारी",
+          credit: "ANI"
+        }
+      ]
+    },
+
+    // ───── AUTHOR BLOCK (INLINE, ONLY ONCE) ─────
+    {
+      id: "b7",
+      type: "author",
+      style: "centered-social",
+      author: {
+        name: "शेख सरफराज अहमद",
+        role: "Media Chief",
+        image: "/users/admin.jpg",
+        about: "Social Activity BSP के लिए वरिष्ठ पत्रकार"
+      },
+      socials: {
+        instagram: "https://instagram.com/xyz",
+        twitter: "https://x.com/xyz"
+      }
+    }
+
+  ]
+}
+
+
+const heroImage = blocks.find(b => b.type === "image" && b.isHero);
