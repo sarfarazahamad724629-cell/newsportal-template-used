@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import ImageUploader from "../admin/components/ImageUploader";
 import {
   account,
@@ -86,6 +87,11 @@ export default function UserProfilePage() {
         <div className="user-auth-header">
           <h2>Your profile</h2>
           <p>Update your public details</p>
+        </div>
+        <div className="user-auth-actions">
+          <Link className="user-auth-home-link" to="/">
+            Return To Home Page
+          </Link>
         </div>
 
         {error && <p className="user-auth-error">{error}</p>}

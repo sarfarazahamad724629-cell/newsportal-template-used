@@ -142,6 +142,21 @@
   background: #b91c1c;
 }
 
+.news-login {
+  background: #0f172a;
+  color: #ffffff;
+  padding: 7px 16px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.news-login:hover {
+  background: #111827;
+}
+
 /* =========================
    📱 MOBILE RESPONSIVE
 ========================= */

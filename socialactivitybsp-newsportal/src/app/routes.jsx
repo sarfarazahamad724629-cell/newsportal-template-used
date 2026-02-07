@@ -9,6 +9,7 @@ import NotFound from "../pages/NotFound";
 import UserSignInPage from "../user/UserSignInPage";
 import UserSignUpPage from "../user/UserSignUpPage";
 import UserProfilePage from "../user/UserProfilePage";
+import UserAuthLayout from "../user/UserAuthLayout";
 
 
 // admin
@@ -29,6 +30,7 @@ function RoutesConfig() {
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/news/:identifier" element={<NewsDetails />} />
       <Route path="/category/:name" element={<Category />} />
+      <Route path="/user/auth" element={<UserAuthLayout />} />
       <Route path="/user/signin" element={<UserSignInPage />} />
       <Route path="/user/signup" element={<UserSignUpPage />} />
       <Route path="/user/profile" element={<UserProfilePage />} />
