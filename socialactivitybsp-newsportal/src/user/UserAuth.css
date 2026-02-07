@@ -199,6 +199,8 @@
 
 .user-auth-actions {
   display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .user-auth-home-link {
@@ -210,6 +212,42 @@
   color: #ffffff;
   text-decoration: none;
   font-weight: 600;
+}
+
+.user-auth-logout {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  background: #dc2626;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.user-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.user-profile-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.user-profile-form input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d9e6;
+  font-size: 0.95rem;
+}
+
+.user-profile-form button[type="submit"] {
+  align-self: flex-start;
+  padding: 12px 18px;
 }
 
 @media (max-width: 900px) {

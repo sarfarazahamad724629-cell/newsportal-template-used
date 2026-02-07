@@ -71,6 +71,15 @@ export default function UserProfilePage() {
     }
   };
 
+  const handleSignOut = async () => {
+    setProfileError("");
+    await account.deleteSession("current");
+    setUserDoc(null);
+    setName("");
+    setUsername("");
+    setAvatar("");
+  };
+
   if (loading) {
     return (
       <div className="user-auth-page">
@@ -92,13 +101,20 @@ export default function UserProfilePage() {
           <Link className="user-auth-home-link" to="/">
             Return To Home Page
           </Link>
+          <button
+            type="button"
+            className="user-auth-logout"
+            onClick={handleSignOut}
+          >
+            Log Out
+          </button>
         </div>
 
         {error && <p className="user-auth-error">{error}</p>}
         {profileError && <p className="user-auth-error">{profileError}</p>}
 
         {!error && (
-          <form onSubmit={handleProfileSave}>
+          <form className="user-profile-form" onSubmit={handleProfileSave}>
             <label>
               Name
               <input
