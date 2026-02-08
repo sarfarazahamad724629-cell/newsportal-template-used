@@ -7,6 +7,9 @@ import {
   POSTS_COLLECTION_ID,
   Query,
 } from "./appwrite/appwrite";
+import { account } from "../user/appwriteClient";
+import { ensureUserDocument } from "../user/userAuthUtils";
+import { ID } from "appwrite";
 
 import waIcon from "/images/social-icons/waicon.png";
 import igIcon from "/images/social-icons/igicon.png";
@@ -33,6 +36,15 @@ const NewsPreviewPage = ({ news }) => {
   const [stats, setStats] = useState({ likes: 0, shares: 0, comments: 0 });
   const [docId, setDocId] = useState(null);
   const [relatedNews, setRelatedNews] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
+  const [commentError, setCommentError] = useState("");
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+
+  const USERS_COLLECTION_ID = import.meta.env.VITE_APPWRITE_USERS_COLLECTION_ID;
+  const COMMENTS_COLLECTION_ID =
+    import.meta.env.VITE_APPWRITE_COMMENTS_COLLECTION_ID;
 
   const previewState = useMemo(() => {
     if (news) {
@@ -319,6 +331,46 @@ const NewsPreviewPage = ({ news }) => {
     loadRelatedNews();
   }, [displayCategory, docId]);
 
+  const syncCommentCount = async (count) => {
+    setStats((prev) => {
+      const next = { ...prev, comments: count };
+      if (docId) {
+        databases
+          .updateDocument(DATABASE_ID, POSTS_COLLECTION_ID, docId, {
+            stats: JSON.stringify(next),
+          })
+          .catch((error) => {
+            console.error("❌ Failed to sync comment count", error);
+          });
+      }
+      return next;
+    });
+  };
+
+  const loadComments = async () => {
+    if (!docId || !COMMENTS_COLLECTION_ID) return;
+    setCommentsLoading(true);
+    setCommentError("");
+    try {
+      const res = await databases.listDocuments(
+        DATABASE_ID,
+        COMMENTS_COLLECTION_ID,
+        [Query.equal("postId", docId), Query.orderDesc("$createdAt")]
+      );
+      setComments(res.documents || []);
+      await syncCommentCount(res.total ?? res.documents.length);
+    } catch (error) {
+      console.error("❌ Failed to load comments", error);
+      setComments([]);
+    } finally {
+      setCommentsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadComments();
+  }, [docId]);
+
   const handleStatChange = async (key) => {
     const nextStats = {
       ...stats,
@@ -340,6 +392,60 @@ const NewsPreviewPage = ({ news }) => {
       );
     } catch (error) {
       console.error("❌ Failed to update stats", error);
+    }
+  };
+
+  const handleCommentSubmit = async (event) => {
+    event.preventDefault();
+    setCommentError("");
+
+    if (!commentText.trim()) return;
+    if (!docId) {
+      setCommentError("Post is not available for comments.");
+      return;
+    }
+
+    let authUser = null;
+
+    try {
+      authUser = await account.get();
+    } catch (error) {
+      setShowAuthPrompt(true);
+      return;
+    }
+
+    if (!USERS_COLLECTION_ID || !COMMENTS_COLLECTION_ID) {
+      setCommentError("Comment service is not configured.");
+      return;
+    }
+
+    try {
+      const userDoc = await ensureUserDocument(authUser, {
+        email: authUser.email,
+      });
+
+      if (userDoc.status !== "active") {
+        setCommentError("Your account is not allowed to comment.");
+        return;
+      }
+
+      await databases.createDocument(
+        DATABASE_ID,
+        COMMENTS_COLLECTION_ID,
+        ID.unique(),
+        {
+          comment: commentText.trim(),
+          postId: docId,
+          userId: userDoc.userId || authUser.$id,
+          userName: userDoc.name || authUser.name || "User",
+        }
+      );
+
+      setCommentText("");
+      await loadComments();
+    } catch (error) {
+      console.error("❌ Failed to submit comment", error);
+      setCommentError("Unable to submit comment.");
     }
   };
   /* -------------------------------
@@ -891,6 +997,61 @@ const NewsPreviewPage = ({ news }) => {
                 </div>
               ))
             )}
+            <div className="np-comments">
+              <div className="np-comments-header">
+                <h3>Comments</h3>
+                <span>{stats.comments || 0} total</span>
+              </div>
+              <form className="np-comments-form" onSubmit={handleCommentSubmit}>
+                <textarea
+                  placeholder="Share your thoughts..."
+                  value={commentText}
+                  onChange={(event) => setCommentText(event.target.value)}
+                  rows={4}
+                />
+                {commentError && (
+                  <p className="np-comments-error">{commentError}</p>
+                )}
+                <div className="np-comments-actions">
+                  <button type="submit">Send Comment</button>
+                </div>
+              </form>
+              {commentsLoading ? (
+                <p className="np-comments-empty">Loading comments...</p>
+              ) : comments.length === 0 ? (
+                <p className="np-comments-empty">No Comments Yet</p>
+              ) : (
+                <div className="np-comments-list">
+                  {comments.map((comment) => (
+                    <div key={comment.$id} className="np-comment-card">
+                      <div className="np-comment-avatar">
+                        {comment.userName?.[0] || "U"}
+                      </div>
+                      <div className="np-comment-body">
+                        <div className="np-comment-meta">
+                          <span className="np-comment-name">
+                            {comment.userName || "User"}
+                          </span>
+                          <span className="np-comment-time">
+                            {new Date(comment.$createdAt).toLocaleString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                                hour: "numeric",
+                                minute: "2-digit",
+                              }
+                            )}
+                          </span>
+                        </div>
+                        <p className="np-comment-text">{comment.comment}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             {relatedNews.length > 0 && (
               <div className="np-related">
                 <div className="np-related-title">You might also like</div>
@@ -931,6 +1092,29 @@ const NewsPreviewPage = ({ news }) => {
           </section>
         </main>
       </div>
+      {showAuthPrompt && (
+        <div className="np-auth-modal">
+          <div className="np-auth-modal-card">
+            <h4>Sign in required</h4>
+            <p>Please sign in to post a comment.</p>
+            <div className="np-auth-modal-actions">
+              <button
+                type="button"
+                onClick={() => navigate("/user/auth")}
+              >
+                Go to Sign In
+              </button>
+              <button
+                type="button"
+                className="ghost"
+                onClick={() => setShowAuthPrompt(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
