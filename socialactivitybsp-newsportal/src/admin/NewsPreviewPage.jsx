@@ -493,6 +493,41 @@ const NewsPreviewPage = ({ news }) => {
       return <span key={node.id || `rt-${i}`}>{content}</span>;
     });
 
+  const shareText = useMemo(() => {
+    const parts = (blocks || [])
+      .map((block) => {
+        if (block?.text) return block.text;
+        if (Array.isArray(block?.richText)) {
+          return block.richText.map((node) => node.text || "").join(" ");
+        }
+        return "";
+      })
+      .filter(Boolean);
+    return parts.join(" ").slice(0, 300);
+  }, [blocks]);
+
+  const handleShare = async () => {
+    const sharePayload = {
+      title: displayTitle,
+      text: shareText || displayTitle,
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(sharePayload);
+        handleStatChange("shares");
+      } catch (error) {
+        console.log("Error sharing", error);
+      }
+      return;
+    }
+
+    alert(
+      "Web Share API is not supported in your browser. You can copy the link manually."
+    );
+  };
+
   /* -------------------------------
      🔹 Social Icons
   -------------------------------- */
@@ -966,7 +1001,7 @@ const NewsPreviewPage = ({ news }) => {
               <button
                 className="np-action-button"
                 type="button"
-                onClick={() => handleStatChange("shares")}
+                onClick={handleShare}
               >
                 🔗 Share
                 <span className="np-action-count">{stats.shares || 0}</span>
